@@ -35,7 +35,8 @@ const RegisterForm = () => {
             return false;
         }
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        // Extremely strict email regex: domain must start with a letter and contain no numbers
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z][a-zA-Z-]*\.[a-zA-Z]{2,}$/;
         if (!emailRegex.test(email)) {
             toast.error('Please enter a valid email address');
             return false;
@@ -56,7 +57,7 @@ const RegisterForm = () => {
 
         const resultAction = await dispatch(registerUser(formData));
         if (registerUser.fulfilled.match(resultAction)) {
-            navigate('/app');
+            navigate('/login');
         }
     };
 

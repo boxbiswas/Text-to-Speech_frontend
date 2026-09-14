@@ -13,13 +13,13 @@ import AppLayout from './components/layout/AppLayout';
 
 function App() {
   const dispatch = useDispatch();
-  const { loading } = useSelector((state) => state.auth);
+  const { isCheckingAuth } = useSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(checkAuth());
   }, [dispatch]);
 
-  if (loading) {
+  if (isCheckingAuth) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F7F9FC]">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#4F46E5]"></div>
