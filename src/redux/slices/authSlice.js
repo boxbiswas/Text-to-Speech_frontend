@@ -2,127 +2,109 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../https/axios';
 import toast from 'react-hot-toast';
 
-// Register User
-export const registerUser = createAsyncThunk(
-    'auth/register',
-    async (userData, thunkAPI) => {
-        try {
-            const response = await api.post('/auth/register', userData);
-            toast.success('Registration successful');
-            return response.data.user;
-        } catch (error) {
-            const message = error.response?.data?.message || 'Registration failed';
-            toast.error(message);
-            return thunkAPI.rejectWithValue(message);
-        }
-    }
-);
+const storedUser = JSON.parse(localStorage.getItem('user'));
 
-// Login User
 export const loginUser = createAsyncThunk(
-    'auth/login',
-    async (userData, thunkAPI) => {
+    'auth/loginUser',
+    async (credentials, { rejectWithValue }) => {
         try {
-            const response = await api.post('/auth/login', userData);
-            toast.success('Login successful');
-            return response.data.user;
+            const response = await api.post('/auth/login', credentials);
+            return response.data;
         } catch (error) {
-            const message = error.response?.data?.message || 'Login failed';
-            toast.error(message);
-            return thunkAPI.rejectWithValue(message);
+            return rejectWithValue(error.response?.data?.message || 'Login failed');
         }
     }
 );
 
-// Logout User
+export const registerUser = createAsyncThunk(
+    'auth/registerUser',
+    async (credentials, { rejectWithValue }) => {
+        try {
+            const response = await api.post('/auth/register', credentials);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || 'Registration failed');
+        }
+    }
+);
+
 export const logoutUser = createAsyncThunk(
-    'auth/logout',
-    async (_, thunkAPI) => {
+    'auth/logoutUser',
+    async (_, { rejectWithValue }) => {
         try {
-            await api.post('/auth/logout');
-            toast.success('Logged out');
-            return null;
+            const response = await api.post('/auth/logout');
+            return response.data;
         } catch (error) {
-            return thunkAPI.rejectWithValue('Logout failed');
+            return rejectWithValue(error.response?.data?.message || 'Logout failed');
         }
     }
 );
-
-// Check Authentication / Get Me
-export const checkAuth = createAsyncThunk(
-    'auth/check',
-    async (_, thunkAPI) => {
-        try {
-            const response = await api.get('/auth/me');
-            return response.data.user;
-        } catch (error) {
-            return thunkAPI.rejectWithValue('Not authenticated');
-        }
-    }
-);
-
-const initialState = {
-    user: null,
-    isAuthenticated: false,
-    isCheckingAuth: true, // For initial app load
-    loading: false,       // For login/register forms
-    error: null,
-};
 
 const authSlice = createSlice({
     name: 'auth',
-    initialState,
-    reducers: {},
+    initialState: {
+        user: storedUser || null,
+        isAuthenticated: !!storedUser,
+        loading: false,
+        error: null,
+    },
+    reducers: {
+        logout: (state) => {
+            state.user = null;
+            state.isAuthenticated = false;
+            localStorage.removeItem('user');
+        }
+    },
     extraReducers: (builder) => {
         builder
-            // Check Auth
-            .addCase(checkAuth.pending, (state) => {
-                state.isCheckingAuth = true;
-            })
-            .addCase(checkAuth.fulfilled, (state, action) => {
-                state.isCheckingAuth = false;
-                state.isAuthenticated = true;
-                state.user = action.payload;
-            })
-            .addCase(checkAuth.rejected, (state) => {
-                state.isCheckingAuth = false;
-                state.isAuthenticated = false;
-                state.user = null;
-            })
-            // Login
+            // Login user
             .addCase(loginUser.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
             .addCase(loginUser.fulfilled, (state, action) => {
                 state.loading = false;
+                state.user = action.payload.user;
                 state.isAuthenticated = true;
-                state.user = action.payload;
+                localStorage.setItem('user', JSON.stringify(action.payload.user));
+                toast.success('Login successful');
             })
             .addCase(loginUser.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+                toast.error(action.payload);
             })
-            // Register
+
+            // Register user
             .addCase(registerUser.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
             .addCase(registerUser.fulfilled, (state, action) => {
                 state.loading = false;
+                state.user = action.payload.user;
                 state.isAuthenticated = true;
-                state.user = action.payload;
+                localStorage.setItem('user', JSON.stringify(action.payload.user));
+                toast.success('Registration successful!');
             })
             .addCase(registerUser.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+                toast.error(action.payload);
             })
-            // Logout
+
+            // Logout user
             .addCase(logoutUser.fulfilled, (state) => {
-                state.isAuthenticated = false;
                 state.user = null;
+                state.isAuthenticated = false;
+                localStorage.removeItem('user');
+                toast.success('Logged out successfully');
+            })
+            .addCase(logoutUser.rejected, (state, action) => {
+                toast.error(action.payload);
             });
-    }
+    },
 });
 
+export const { logout } = authSlice.actions;
 export default authSlice.reducer;

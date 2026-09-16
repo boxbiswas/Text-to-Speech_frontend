@@ -16,6 +16,25 @@ export const fetchVoices = createAsyncThunk(
     }
 );
 
+export const generateAudio = createAsyncThunk(
+    'tts/generateAudio',
+    async (_, thunkAPI) => {
+        const state = thunkAPI.getState().tts;
+        try {
+            const response = await api.post('/tts', {
+                text: state.text,
+                language: state.language,
+                voice: state.voice
+            });
+            return response.data.audioUrl;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Failed to generate audio';
+            toast.error(message);
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
 const initialState = {
     text: '',
     language: '',
@@ -73,6 +92,20 @@ const ttsSlice = createSlice({
                 }
             })
             .addCase(fetchVoices.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(generateAudio.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+                state.audioUrl = null;
+            })
+            .addCase(generateAudio.fulfilled, (state, action) => {
+                state.loading = false;
+                state.audioUrl = action.payload;
+                toast.success('Audio generated successfully!');
+            })
+            .addCase(generateAudio.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             });
