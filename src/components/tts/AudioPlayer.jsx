@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 const AudioPlayer = () => {
-    const { audioUrl } = useSelector(state => state.tts);
+    const { audioUrl, format = 'mp3' } = useSelector(state => state.tts);
     const audioRef = useRef(null);
 
     useEffect(() => {
@@ -28,13 +28,13 @@ const AudioPlayer = () => {
             <div className="mt-4 flex justify-end">
                 <a 
                     href={audioUrl} 
-                    download="generated_audio.mp3" 
+                    download={`generated_audio.${format}`}
                     className="text-sm text-[#4F46E5] hover:text-[#4338CA] font-medium flex items-center gap-1"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                     </svg>
-                    Download MP3
+                    Download {format.toUpperCase()}
                 </a>
             </div>
         </div>

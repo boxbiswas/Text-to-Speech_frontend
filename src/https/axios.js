@@ -16,7 +16,7 @@ api.interceptors.response.use(
             // Only redirect if we are not already on the login page
             // to avoid redirect loops during initial auth checks
             if (window.location.pathname !== '/login') {
-                sessionStorage.removeItem('user');
+                localStorage.removeItem('user');
                 window.location.href = '/login';
             }
         }

@@ -24,9 +24,22 @@ export const generateAudio = createAsyncThunk(
             const response = await api.post('/tts', {
                 text: state.text,
                 language: state.language,
-                voice: state.voice
+                voice: state.voice,
+                format: state.format
             });
-            return response.data.audioUrl;
+            const audioUrl = response.data.audioUrl;
+            
+            // Background save to history
+            api.post('/history', {
+                text: state.text,
+                language: state.language,
+                voice: state.voice,
+                format: state.format,
+                audioUrl: audioUrl,
+                audioFormat: state.format
+            }).catch(e => console.error('Failed to save history', e));
+
+            return audioUrl;
         } catch (error) {
             const message = error.response?.data?.message || 'Failed to generate audio';
             toast.error(message);
@@ -39,6 +52,7 @@ const initialState = {
     text: '',
     language: '',
     voice: '',
+    format: 'mp3',
     audioUrl: null,
     availableLanguages: [],
     availableVoices: [],
@@ -65,6 +79,9 @@ const ttsSlice = createSlice({
         },
         setVoice: (state, action) => {
             state.voice = action.payload;
+        },
+        setFormat: (state, action) => {
+            state.format = action.payload;
         },
         setAudioUrl: (state, action) => {
             state.audioUrl = action.payload;
@@ -112,6 +129,6 @@ const ttsSlice = createSlice({
     }
 });
 
-export const { setText, setLanguage, setVoice, setAudioUrl } = ttsSlice.actions;
+export const { setText, setLanguage, setVoice, setFormat, setAudioUrl } = ttsSlice.actions;
 
 export default ttsSlice.reducer;

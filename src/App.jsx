@@ -11,12 +11,15 @@ import ProtectedRoute from './components/ProtectedRoute';
 import AppLayout from './components/layout/AppLayout';
 
 function App() {
+  const { isAuthenticated } = useSelector((state) => state.auth);
+
   return (
     <BrowserRouter>
       <Toaster position="top-center" />
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+        {/* Auth Routes - Redirect to app if already logged in */}
+        <Route path="/login" element={isAuthenticated ? <Navigate to="/app" replace /> : <LoginPage />} />
+        <Route path="/register" element={isAuthenticated ? <Navigate to="/app" replace /> : <RegisterPage />} />
         
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>

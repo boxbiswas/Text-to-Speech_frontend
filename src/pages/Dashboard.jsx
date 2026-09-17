@@ -4,6 +4,7 @@ import { fetchVoices } from '../redux/slices/ttsSlice';
 import TextInput from '../components/tts/TextInput';
 import LanguageSelector from '../components/tts/LanguageSelector';
 import VoiceSelector from '../components/tts/VoiceSelector';
+import FormatSelector from '../components/tts/FormatSelector';
 import GenerateButton from '../components/tts/GenerateButton';
 import AudioPlayer from '../components/tts/AudioPlayer';
 
@@ -45,6 +46,7 @@ const Dashboard = () => {
                     <div className="space-y-6">
                         <LanguageSelector />
                         <VoiceSelector />
+                        <FormatSelector />
                         
                         {/* Generate Audio Action */}
                         <GenerateButton />
