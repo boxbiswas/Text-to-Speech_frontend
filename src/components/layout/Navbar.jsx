@@ -46,13 +46,24 @@ const Navbar = () => {
 
                     {/* User Actions */}
                     <div className="flex items-center space-x-4">
-                        <span className="text-[#374151] font-medium hidden sm:block text-[15px]">
-                            {user?.name}
-                        </span>
-                        <Button variant="secondary" onClick={handleLogout} className="!h-9 !px-4 !text-[13px] !rounded-full group">
-                            <LogOut size={16} className="mr-2 text-[#9CA3AF] group-hover:text-[#374151] transition-colors" />
-                            Log out
-                        </Button>
+                        {/* User Avatar & Name Pill */}
+                        <div className="flex items-center space-x-3 bg-white/60 backdrop-blur-sm border border-white/80 pl-1.5 pr-4 py-1.5 rounded-full shadow-sm hover:shadow-md transition-shadow">
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#4F46E5] to-[#0EA5E9] flex items-center justify-center text-white font-bold text-[13px] shadow-inner">
+                                {user?.name?.charAt(0).toUpperCase() || 'U'}
+                            </div>
+                            <span className="text-[#374151] font-medium hidden sm:block text-[14px]">
+                                {user?.name}
+                            </span>
+                        </div>
+                        
+                        {/* Styled Logout Button */}
+                        <button 
+                            onClick={handleLogout} 
+                            className="flex items-center justify-center px-4 h-10 rounded-full bg-white border border-slate-200 shadow-sm hover:bg-rose-50 hover:border-rose-200 text-slate-500 hover:text-rose-600 transition-all duration-300 hover:shadow group"
+                        >
+                            <LogOut size={16} className="mr-2 transition-transform group-hover:-translate-x-1" />
+                            <span className="text-[14px] font-medium">Log out</span>
+                        </button>
                     </div>
                 </div>
             </div>
