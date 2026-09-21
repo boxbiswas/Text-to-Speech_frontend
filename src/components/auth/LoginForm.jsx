@@ -77,12 +77,10 @@ const LoginForm = () => {
                 Sign in
             </Button>
 
-            <div className="flex justify-between items-center text-[13px] pt-2">
-                <Link to="#" className="text-[#9CA3AF] hover:text-[#6B7280] transition-colors">
-                    Forgot password?
-                </Link>
+            <div className="text-center text-[13px] pt-2 text-[#6B7280]">
+                Don't have an account?{' '}
                 <Link to="/register" className="font-semibold text-[#4F46E5] hover:text-[#4338CA] transition-colors">
-                    Create an account
+                    Create one
                 </Link>
             </div>
         </form>

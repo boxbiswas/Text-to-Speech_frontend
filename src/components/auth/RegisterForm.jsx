@@ -99,10 +99,8 @@ const RegisterForm = () => {
                 Create Account
             </Button>
 
-            <div className="flex justify-between items-center text-[13px] pt-2">
-                <Link to="/login" className="text-[#9CA3AF] hover:text-[#6B7280] transition-colors">
-                    Already have an account?
-                </Link>
+            <div className="text-center text-[13px] pt-2 text-[#6B7280]">
+                Already have an account?{' '}
                 <Link to="/login" className="font-semibold text-[#4F46E5] hover:text-[#4338CA] transition-colors">
                     Sign in
                 </Link>
